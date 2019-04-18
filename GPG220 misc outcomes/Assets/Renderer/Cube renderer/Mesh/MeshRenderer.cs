@@ -29,7 +29,8 @@ public class MeshRenderer : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            for (var i = 0; i < meshs.Count; i++) meshs[i].pos.z++;
+            //for (var i = 0; i < meshs.Count; i++) meshs[i].pos.z++;
+            rotation += 0.01f;
             Draw();
         }
 
@@ -38,7 +39,8 @@ public class MeshRenderer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        for (var i = 0; i < meshs.Count; i++) meshs[i].pos.z++;
+        //for (var i = 0; i < meshs.Count; i++) meshs[i].pos.z++;
+        rotation += 0.01f;
         Draw();
     }
 
@@ -88,7 +90,7 @@ public class MeshRenderer : MonoBehaviour
 
             for (var j = 0; j < meshs[i].vertices.Length; j++)
             {
-                if (meshs[i].vertices[j] == new Vector3(-1,-1,-1)) return;
+                if (meshs[i].vertices[j] == new Vector3(-1,-1,-1)) continue;
 //                float temp = Vector3.Distance(new Vector3(meshs[i].pos.x ,0 ,0), new Vector3(xSize/2, 0, 0)) / slowDown;
 //                if (meshs[i].pos.x > xSize / 2)
 //                {
@@ -98,7 +100,7 @@ public class MeshRenderer : MonoBehaviour
 //               {
 //                    viewX = meshs[i].vertices[j].x + meshs[i].pos.x - meshs[i].vertices[j].z/8 - meshs[i].pos.z/8* temp;
 //                }
-                viewX = meshs[i].vertices[j].x + meshs[i].pos.x + meshs[i].vertices[j].z;
+                viewX = meshs[i].vertices[j].x  + meshs[i].vertices[j].z;
 //                temp = Vector3.Distance(new Vector3(0 ,meshs[i].pos.y ,0), new Vector3( 0, ySize/2,0)) / slowDown;
 //                if (meshs[i].pos.y > ySize / 2)
 //                {
@@ -108,7 +110,7 @@ public class MeshRenderer : MonoBehaviour
 //                {
 //                    viewY = meshs[i].vertices[j].y + meshs[i].pos.y - meshs[i].vertices[j].z/8 - meshs[i].pos.z/8* temp;
 //                }
-                viewY = meshs[i].vertices[j].y + meshs[i].pos.y + meshs[i].vertices[j].z;
+                viewY = meshs[i].vertices[j].y + meshs[i].vertices[j].z;
 
 
                 if (isScaling)
@@ -128,8 +130,9 @@ public class MeshRenderer : MonoBehaviour
 
     private void Scale(Mesh mesh, float x, float y, int j)
     {
-        x *= scale;
-        y *= scale;
+        x = x * scale;
+        y = y * scale;
+        
         if (isRotating)
             Rotating(mesh, x, y, j);
         else
@@ -138,34 +141,23 @@ public class MeshRenderer : MonoBehaviour
 
     private void Rotating(Mesh mesh, float x, float y, int j)
     {
-        PixelSet(mesh, (int) x, (int) y);
+        float newX = (Mathf.Cos(rotation) * x) + (-Mathf.Sin(rotation) * y);
+        float newY = (Mathf.Sin(rotation) * x) + (Mathf.Cos(rotation) * y);
+        x = newX;
+        y = newY;
+        checkValues(mesh, (int) x, (int) y,j);
     }
 
     private void checkValues(Mesh mesh, int x, int y, int j)
     {
-        Debug.Log(x + " one");
-        Debug.Log(y+" two");
-        Debug.Log(j+" three");
+        x += (int)mesh.pos.x;
+        y += (int)mesh.pos.y;
         if (x >= xSize || x <= 0 || y >= ySize || y <= 0)
         {
-            mesh.vertices[j] = new Vector3(-1, -1, -1);
-            for (var t = 0; t < 8; t++)
-            {
-                Debug.Log(mesh.vertices[j]);
-                if (mesh.vertices[t] == new Vector3(-1, -1, -1) && t == 7)
-                {
-                    meshs.Remove(mesh);
-                    mesh = null;
-                }
-                else
-                {
-                    break;
-                }
-            }
         }
         else
         {
-            if (mesh != null) PixelSet(mesh, x, y);
+           PixelSet(mesh, x, y);
         }
     }
 
