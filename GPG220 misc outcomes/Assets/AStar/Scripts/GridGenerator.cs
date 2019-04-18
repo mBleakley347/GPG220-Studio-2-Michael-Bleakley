@@ -58,21 +58,5 @@ namespace AStar
                 }
             }
         }
-
-        private void OnDrawGizmos()
-        {
-            
-            for (int i = 0; i < sizeX; i++)
-            {
-                for (int j = 0; j < sizeZ; j++)
-                {
-                    if (grid[i,j] != null || grid[i,j].blocked)
-                    {
-                        Gizmos.color = Color.red;
-                        Gizmos.DrawCube(new Vector3((transform.position.x - sizeX/2) + i,0,(transform.position.z - sizeZ/2) + j), Vector3.one);
-                    }
-                }
-            }
-        }
     }
 }

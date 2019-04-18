@@ -6,4 +6,5 @@ public class Mesh
 {
     public Vector3 pos;
     public Vector3[] vertices;
+    public Vector3 colour;
 }
