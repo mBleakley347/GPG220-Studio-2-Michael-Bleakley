@@ -14,22 +14,14 @@ namespace AStar
          */
 
         public Node[,] grid;// make static?
-        [SerializeField] private int sizeX;
-        [SerializeField] private int sizeZ;
+        public int sizeX;
+        public int sizeY;
 
         // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
-            grid = new Node[sizeX,sizeZ];
-            for (int i = 0; i < sizeX; i++)
-            {
-                for (int j = 0; j < sizeZ; j++)
-                {
-                    grid[i, j].positionX = i;
-                    grid[i, j].positionY = j;
-                    grid[i, j].blocked = false;
-                }
-            }
+            grid = new Node[sizeX,sizeY];
+            
 
             BuildGrid();
         }
@@ -49,11 +41,35 @@ namespace AStar
         {
             for (int i = 0; i < sizeX; i++)
             {
-                for (int j = 0; j < sizeZ; j++)
+                for (int j = 0; j < sizeY; j++)
                 {
-                    if (Physics.CheckBox(new Vector3((transform.position.x - sizeX/2) + i, 0, (transform.position.z - sizeZ/2) + j), new Vector3(0.5f, 0.5f, 0.5f), Quaternion.identity))
+                    grid[i, j] = new Node();
+                    grid[i,j].position = new Vector2(i,j);
+                    if (Physics.CheckBox(new Vector3(i, 0,j), new Vector3(0.5f, 0.5f, 0.5f), Quaternion.identity))
                     {
                         grid[i, j].blocked = true;
+                        
+                    }
+                    else
+                    {
+                        grid[i, j].blocked = false;
+                    }
+                }
+            }
+            
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (!Application.isPlaying) return;
+            for (int x = 0;x < sizeX; x++)
+            {
+                for (int y = 0; y < sizeY; y++)
+                {
+                    if (grid[x,y].blocked)
+                    {
+                        Gizmos.color = Color.red;
+                        Gizmos.DrawCube(new Vector3(grid[x,y].position.x,-0.45f, grid[x,y].position.y), Vector3.one );
                     }
                 }
             }
