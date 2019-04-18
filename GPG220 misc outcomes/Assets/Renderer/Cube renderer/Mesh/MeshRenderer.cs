@@ -122,7 +122,7 @@ public class MeshRenderer : MonoBehaviour
                     if (isRotating)
                         Rotating(meshs[i], viewX, viewY, j);
                     else
-                        PixelSet(meshs[i], (int) viewX, (int) viewY);
+                        checkValues(meshs[i], (int) viewX, (int) viewY, j);
                 }
             }
         }
