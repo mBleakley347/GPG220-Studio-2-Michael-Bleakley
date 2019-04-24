@@ -36,8 +36,9 @@ namespace AStar
             open = new List<Node>();
             closed = new List<Node>();
             path = new List<Node>();
-            start = new Vector2((int)Random.Range(0, size.x), (int)Random.Range(0, size.y));
-            end = new Vector2((int)Random.Range(0, size.x), (int)Random.Range(0, size.y));
+            start = new Vector2(4,0);
+            end = new Vector2(7,14);
+            //new Vector2((int)Random.Range(0, size.x), (int)Random.Range(0, size.y));
             foreach (var maps in map)
             {
                 maps.hCost = Vector2.Distance(maps.position, end);
@@ -61,6 +62,7 @@ namespace AStar
             {
                 if (Input.GetMouseButtonDown(1)) CyclePath();
                 if (Input.GetMouseButton(2)) CyclePath();
+                if (Input.GetMouseButton(2)) CyclePath();
             }
 
             if (Input.GetMouseButtonDown(0)) SetUp();
@@ -81,9 +83,13 @@ namespace AStar
                 if (temp < testNode.fCost)
                 {
                     testNode.fCost = temp;
-                    testNode.parent = lowest;
+                    //testNode.parent = lowest;
                 }
-                if (newLowest.fCost > testNode.fCost || newLowest.fCost == 0) newLowest = testNode;
+
+                if (newLowest.fCost > testNode.fCost || newLowest.fCost == 0)
+                {
+                    newLowest = testNode;
+                }
             }
             lowest = newLowest;
             if (lowest.position == end)
@@ -96,6 +102,7 @@ namespace AStar
             }
         }
 
+        
         private void NewPaths()
         {
             //Debug.Log("new paths");
@@ -106,15 +113,28 @@ namespace AStar
                     if (i < 0 || i >= size.x || j < 0 || j >= size.y) continue;
                     if (open.Contains(map[i, j]))
                     {
-                        if (map[i, j].gCost > lowest.gCost + 1)
+                        if (map[i, j].gCost >= lowest.gCost + Vector2.Distance(map[i,j].position, lowest.position))
                         {
-                            map[i, j].gCost = lowest.gCost + 1;
+                            map[i, j].gCost = lowest.gCost + Vector2.Distance(map[i,j].position, lowest.position);
+                            map[i,j].parent = lowest;
                         }
-                    }else if (!closed.Contains(map[i, j]) && !map[i,j].blocked)
+                    }
+//                    else if (closed.Contains(map[i,j]))
+//                    {
+//                        if (map[i, j].gCost < lowest.gCost - 1)
+//                        {
+//                            lowest.gCost = map[i, j].gCost + 1;
+//                            //lowest.parent = map[i, j];
+//                        } else if (map[i, j].gCost > lowest.gCost + 1)
+//                        {
+//                            map[i, j].gCost = lowest.gCost + 1;
+//                            //map[i,j].parent = lowest;
+//                        }
+//                    }
+                    else if (!map[i, j].blocked && !closed.Contains(map[i,j]))
                     {
-                        // TODO check for diagonals (use 1.4) check if current path is lowest to it. check parents are best parents perhaps taking parent into account for f cost calculation?
-                        map[i,j].parent = lowest;
-                        map[i, j].gCost = lowest.gCost + 1;
+                        map[i, j].parent = lowest;
+                        map[i, j].gCost = lowest.gCost + Vector2.Distance(map[i,j].position, lowest.position);
                         open.Add(map[i, j]);
                     }
                 }
