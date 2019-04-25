@@ -36,8 +36,8 @@ namespace AStar
             open = new List<Node>();
             closed = new List<Node>();
             path = new List<Node>();
-            start = new Vector2(4,0);
-            end = new Vector2(7,14);
+            start = new Vector2((int)Random.Range(0, size.x), (int)Random.Range(0, size.y));
+            end = new Vector2((int)Random.Range(0, size.x), (int)Random.Range(0, size.y));
             //new Vector2((int)Random.Range(0, size.x), (int)Random.Range(0, size.y));
             foreach (var maps in map)
             {
@@ -49,6 +49,7 @@ namespace AStar
             lowest = map[(int) start.x, (int) start.y];
             map[(int) start.x, (int) start.y].gCost = 0;
             map[(int) start.x, (int) start.y].fCost = 0;
+            NewPaths();
         }
 
         // Update is called once per frame
@@ -61,6 +62,9 @@ namespace AStar
             else
             {
                 if (Input.GetMouseButtonDown(1)) CyclePath();
+                if (Input.GetMouseButton(2)) CyclePath();
+                if (Input.GetMouseButton(2)) CyclePath();
+                if (Input.GetMouseButton(2)) CyclePath();
                 if (Input.GetMouseButton(2)) CyclePath();
                 if (Input.GetMouseButton(2)) CyclePath();
             }
@@ -111,6 +115,7 @@ namespace AStar
                 for (var j = (int) lowest.position.y - 1; j < lowest.position.y + 2; j++)
                 {
                     if (i < 0 || i >= size.x || j < 0 || j >= size.y) continue;
+                    if (map[i,j] == lowest) continue;
                     if (open.Contains(map[i, j]))
                     {
                         if (map[i, j].gCost >= lowest.gCost + Vector2.Distance(map[i,j].position, lowest.position))
@@ -119,18 +124,16 @@ namespace AStar
                             map[i,j].parent = lowest;
                         }
                     }
-//                    else if (closed.Contains(map[i,j]))
-//                    {
-//                        if (map[i, j].gCost < lowest.gCost - 1)
-//                        {
-//                            lowest.gCost = map[i, j].gCost + 1;
-//                            //lowest.parent = map[i, j];
-//                        } else if (map[i, j].gCost > lowest.gCost + 1)
-//                        {
-//                            map[i, j].gCost = lowest.gCost + 1;
-//                            //map[i,j].parent = lowest;
-//                        }
-//                    }
+                    else if (closed.Contains(map[i,j]))
+                    {
+                        if (map[i, j].gCost  >= lowest.gCost + Vector2.Distance(map[i,j].position, lowest.position))
+                        {
+                            lowest.gCost = lowest.gCost + Vector2.Distance(map[i,j].position, lowest.position);
+                            lowest.parent = map[i, j];
+                            closed.Remove(map[i, j]);
+                            open.Add(map[i,j]);
+                        } 
+                    }
                     else if (!map[i, j].blocked && !closed.Contains(map[i,j]))
                     {
                         map[i, j].parent = lowest;
